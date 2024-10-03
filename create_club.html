@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Club</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+
+    <!-- Header -->
+    <header class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 text-center fixed top-0 flex justify-between items-center px-4">
+        <!-- Back button -->
+        <button onclick="window.location.href='index.html'" class="text-white hover:text-gray-300">
+            &#8592; Back
+        </button>
+        <h1 class="text-2xl font-bold">Shopping Club</h1>
+        <span></span> <!-- Spacer to balance the back button on the left -->
+    </header>
+
+    <!-- Main content -->
+    <div class="flex flex-col items-center justify-center w-full min-h-screen pt-16 px-4">
+        <!-- Step 1: Choose Club Type -->
+        <div id="chooseClubType" class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
+            <h2 class="text-2xl font-semibold text-center mb-6">Choose Club's Type</h2>
+            
+            <form id="clubTypeForm" class="space-y-4">
+                <!-- Personal Shopping Club -->
+                <div class="flex items-start">
+                    <input type="radio" id="personalClub" name="clubType" value="personal" class="h-5 w-5 text-orange-600 focus:ring-0">
+                    <div class="ml-3">
+                        <label for="personalClub" class="font-bold text-lg">Personal Shopping Club</label>
+                        <p class="text-sm text-gray-600">Create your own personal club for exclusive shopping experiences.</p>
+                    </div>
+                </div>
+
+                <!-- Dropshipping Club -->
+                <div class="flex items-start">
+                    <input type="radio" id="dropshippingClub" name="clubType" value="dropshipping" class="h-5 w-5 text-orange-600 focus:ring-0">
+                    <div class="ml-3">
+                        <label for="dropshippingClub" class="font-bold text-lg">Dropshipping Club</label>
+                        <p class="text-sm text-gray-600">Sell your pinned products and earn up to KES 10,000.00 Daily.</p>
+                    </div>
+                </div>
+
+                <!-- Continue button -->
+                <button type="button" id="continueButton" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 rounded-md hover:bg-orange-500 transition duration-300">Continue</button>
+            </form>
+        </div>
+
+        <!-- Step 2: Club Details Form (Hidden initially) -->
+        <div id="clubDetailsForm" class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full hidden">
+            <h2 class="text-2xl font-semibold text-center mb-6">Club Details</h2>
+            
+            <form id="clubForm" class="space-y-4">
+                <!-- Club Icon -->
+                <div>
+                    <label for="clubIcon" class="font-semibold">Club Icon (Optional)</label>
+                    <input type="file" id="clubIcon" name="clubIcon" class="block w-full mt-2 p-2 border rounded-md">
+                </div>
+
+                <!-- Club Name (only for dropshipping club) -->
+                <div id="clubNameField" class="hidden">
+                    <label for="clubName" class="font-semibold">Club Name</label>
+                    <input type="text" id="clubName" name="clubName" class="block w-full mt-2 p-2 border rounded-md" placeholder="Enter Club Name">
+                </div>
+
+                <!-- Description (only for dropshipping club) -->
+                <div id="clubDescriptionField" class="hidden">
+                    <label for="clubDescription" class="font-semibold">Club Description</label>
+                    <textarea id="clubDescription" name="clubDescription" class="block w-full mt-2 p-2 border rounded-md" placeholder="Describe your club"></textarea>
+                </div>
+
+                <!-- Location -->
+                <div>
+                    <label for="location" class="font-semibold">Location</label>
+                    <input type="text" id="location" name="location" class="block w-full mt-2 p-2 border rounded-md" placeholder="Enter Location">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="font-semibold">Email</label>
+                    <input type="email" id="email" name="email" class="block w-full mt-2 p-2 border rounded-md" placeholder="Enter Email">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="font-semibold">Password</label>
+                    <input type="password" id="password" name="password" class="block w-full mt-2 p-2 border rounded-md" placeholder="Enter Password">
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 rounded-md hover:bg-orange-500 transition duration-300">Create Club</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="JS/create_club.js"></script>
+</body>
+</html>

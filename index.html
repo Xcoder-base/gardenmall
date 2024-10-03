@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GardenMall</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Styling for logo */
+        .logo-img {
+            height: 60px; /* Increased logo size */
+            border-radius: 50%;
+        }
+
+        /* Header gradient */
+        header {
+            background: linear-gradient(90deg, rgba(255, 100, 0, 1) 0%, rgba(255, 150, 0, 1) 100%);
+        }
+
+        /* Pinterest grid styling */
+        .pinterest-grid {
+            column-count: 4;
+            column-gap: 1rem;
+        }
+
+        .pinterest-item {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease; /* Added hover effect */
+        }
+
+        .pinterest-item:hover {
+            transform: translateY(-5px); /* Elevate on hover */
+        }
+
+        /* Horizontal scrolling for the club boards */
+        .club-boards {
+            display: flex;
+            overflow-x: scroll;
+            gap: 1rem;
+            padding-bottom: 10px;
+        }
+
+        /* Club board styling */
+        .club-board {
+            min-width: 150px;
+            text-align: center;
+            transition: transform 0.3s ease; /* Added hover effect */
+            position: relative; /* Added to position pinned badge */
+        }
+
+        .club-board:hover {
+            transform: scale(1.05); /* Scale up on hover */
+        }
+
+        /* Club icon styling */
+        .club-icon {
+            width: 100px;
+            height: 100px;
+            background-color: #f59e0b;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* Button styles */
+        .btn {
+            border-radius: 9999px; /* Fully rounded buttons */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+        }
+
+        /* Product image hover effect */
+        .product-image {
+            transition: transform 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05); /* Enlarge image on hover */
+        }
+
+        .pinned-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: red;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        /* Join button for clubs */
+        .join-btn {
+            margin-top: 8px;
+            background-color: lightgreen;
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="bg-white">
+
+    <!-- Header Section -->
+    <header class="flex flex-col md:flex-row justify-between items-center p-4 shadow-md">
+        <!-- Logo -->
+        <div class="text-2xl font-bold flex items-center mb-4 md:mb-0">
+            <img src="Images/logo.jpeg" alt="Logo" class="logo-img mr-2"> <!-- Logo Image -->
+            <span class="text-white">GARDENMALL</span>
+        </div>
+
+        <div class="flex items-center w-full md:w-auto justify-between">
+            <!-- Search Bar -->
+            <div class="flex flex-grow mx-4">
+                <input type="text" placeholder="Search for clubs or products..."
+                    class="search-bar w-60 border border-black focus:outline-none focus:ring-2 focus:ring-black"> <!-- Shortened the search bar width -->
+                <button class="bg-red-500 text-white p-2 rounded-r-md hover:bg-red-600 transition duration-200 btn">Search</button>
+            </div>
+
+            <!-- Create Club Button -->
+            <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200 ml-4 btn" onclick="window.location.href='create_club.html'">
+                Create Club
+            </button>
+
+            <!-- Profile Icon with Username -->
+            <div class="relative flex items-center ml-4">
+                <button onclick="window.location.href='/profile'" class="flex items-center focus:outline-none">
+                    <i class="fas fa-user-circle fa-2x text-red-500"></i> <!-- Profile icon -->
+                </button>
+                <span class="text-black ml-2">My Account</span>
+            </div>
+
+            <!-- Menu icon for mobile screens -->
+            <div class="md:hidden ml-4">
+                <button id="menuToggle" class="text-black focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dropdown menu for mobile screens -->
+        <div id="mobileMenu" class="hidden flex-col space-y-2 mt-2 w-full md:hidden bg-white rounded-lg shadow-md p-4">
+            <a href="create_club.html" class="flex items-center text-black hover:bg-gray-100 p-2 rounded">
+                <i class="fas fa-plus mr-2"></i> Create Club
+            </a>
+            <a href="/profile" class="flex items-center text-black hover:bg-gray-100 p-2 rounded">
+                <i class="fas fa-user mr-2"></i> My Account
+            </a>
+        </div>
+
+        <!-- Script to toggle the mobile menu -->
+        <script>
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Close mobile menu when clicking outside
+            window.addEventListener('click', (event) => {
+                if (!menuToggle.contains(event.target) && !mobileMenu.contains(event.target)) {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        </script>
+    </header>
+
+    <!-- Search and Explore Clubs Section -->
+    <section class="container mx-auto my-6">
+        <div class="flex justify-between items-center">
+            <!-- Search for Clubs -->
+            <input type="text" placeholder="Search for shopping clubs..."
+                    class="search-bar w-full border border-black focus:outline-none focus:ring-2 focus:ring-black"> <!-- Changed search bar border to black -->
+            <button class="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 ml-4 transition duration-200 btn">Search</button>
+            <!-- Explore Clubs Button -->
+            <a href="#" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 ml-4 transition duration-200 btn">Explore</a>
+        </div>
+    </section>
+
+    <!-- Shopping Club Boards Section -->
+    <section class="my-8 px-4">
+        <h2 class="text-3xl font-bold text-center mb-4">Explore Shopping Clubs</h2>
+        <div class="club-boards">
+            <div class="club-board" onclick="window.location.href='club1.html'">
+                <span class="pinned-count">10</span>
+                <div class="club-icon mx-auto mb-2"></div>
+                <span class="block text-lg font-bold">Electronics Club</span>
+                <button class="join-btn">Join</button>
+            </div>
+            <div class="club-board" onclick="window.location.href='club2.html'">
+                <span class="pinned-count">5</span>
+                <div class="club-icon mx-auto mb-2"></div>
+                <span class="block text-lg font-bold">Fashion Club</span>
+                <button class="join-btn">Join</button>
+            </div>
+            <div class="club-board" onclick="window.location.href='club3.html'">
+                <span class="pinned-count">8</span>
+                <div class="club-icon mx-auto mb-2"></div>
+                <span class="block text-lg font-bold">Home Decor Club</span>
+                <button class="join-btn">Join</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pinterest Grid for Products -->
+    <section class="container mx-auto my-8">
+        <h2 class="text-2xl font-bold text-orange-800 mb-4">Featured Products</h2>
+    
+        <!-- Pinterest Grid for Products -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4">
+    <!-- Product 1 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product1.html" class="block h-full">
+            <img src="Images/product1.jpeg" alt="Product 1" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$99.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 1</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 1</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product2.html" class="block h-full">
+            <img src="Images/product2.jpeg" alt="Product 2" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$89.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 2</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 2</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product3.html" class="block h-full">
+            <img src="Images/product3.jpeg" alt="Product 3" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$79.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 3</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 3</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product4.html" class="block h-full">
+            <img src="Images/product4.jpeg" alt="Product 4" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$69.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 4</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 4</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 5 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product5.html" class="block h-full">
+            <img src="Images/product5.jpeg" alt="Product 5" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$59.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 5</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 5</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product4.html" class="block h-full">
+            <img src="Images/product4.jpeg" alt="Product 4" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$69.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 4</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 4</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 5 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product5.html" class="block h-full">
+            <img src="Images/product5.jpeg" alt="Product 5" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$59.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 5</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 5</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 4 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product4.html" class="block h-full">
+            <img src="Images/product4.jpeg" alt="Product 4" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$69.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 4</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 4</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 5 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product5.html" class="block h-full">
+            <img src="Images/product5.jpeg" alt="Product 5" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$59.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 5</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 5</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 1 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product1.html" class="block h-full">
+            <img src="Images/product1.jpeg" alt="Product 1" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$99.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 1</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 1</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product2.html" class="block h-full">
+            <img src="Images/product2.jpeg" alt="Product 2" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$89.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 2</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 2</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product3.html" class="block h-full">
+            <img src="Images/product3.jpeg" alt="Product 3" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$79.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 3</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 3</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 1 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product1.html" class="block h-full">
+            <img src="Images/product1.jpeg" alt="Product 1" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$99.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 1</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 1</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 2 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product2.html" class="block h-full">
+            <img src="Images/product2.jpeg" alt="Product 2" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$89.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 2</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 2</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product 3 -->
+    <div class="pinterest-item bg-white shadow-md rounded-lg relative cursor-pointer">
+        <a href="product3.html" class="block h-full">
+            <img src="Images/product3.jpeg" alt="Product 3" class="rounded-lg w-full">
+            <div class="mt-2 p-2">
+                <p class="font-bold text-black">$79.99</p> <!-- Price in bold black -->
+                <p class="font-semibold text-orange-700">Product 3</p> <!-- Product Name -->
+                <p class="text-gray-500">Description for Product 3</p> <!-- Description -->
+            </div>
+        </a>
+        <div class="absolute bottom-0 right-0 m-2">
+            <!-- Pin Icon -->
+            <button class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7v8M8 7v8m4-10v12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+<!-- Additional Products as needed -->
+</div>
+</section>
+
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-800 text-white py-4 text-center">
+        <p>&copy; 2024 GardenMall. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
